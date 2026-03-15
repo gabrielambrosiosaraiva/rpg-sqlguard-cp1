@@ -1,0 +1,53 @@
+Projeto 2: O Despertar do Kernel Ancestral – RPG Engine
+📖 A Estória
+Um antigo servidor de RPG foi encontrado nos escombros de uma universidade esquecida. O mundo de SQLgard está em perigo: uma névoa venenosa está drenando a vida de todos os heróis simultaneamente. Sua missão é criar o "Mestre do Jogo". A interface visual (Python) deve mostrar o estado dos heróis, mas a "física" do mundo e a resolução dos danos por turno devem ser processadas por um motor atômico dentro do banco de dados.
+
+🛠️ O que desenvolver
+Frontend/Backend (Python): Uma interface simples (pode ser via Streamlit ou HTML) que liste os heróis e tenha um botão "Próximo Turno".
+
+Lógica de Negócio (PL/SQL): Um bloco anônimo que simula a passagem do tempo. Ele deve declarar variáveis para o dano da névoa, usar um Cursor para selecionar todos os heróis com status = 'ATIVO' e um Loop para subtrair o HP. Se o HP chegar a zero, o status deve mudar para 'CAÍDO'.
+
+🧪 SQL de Inicialização
+CREATE TABLE TB_HEROIS (
+    id_heroi NUMBER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    nome VARCHAR2(50),
+    classe VARCHAR2(20),
+    hp_atual NUMBER,
+    hp_max NUMBER,
+    status VARCHAR2(20) DEFAULT 'ATIVO'
+);
+
+INSERT INTO TB_HEROIS (nome, classe, hp_atual, hp_max) 
+VALUES ('Artorias', 'GUERREIRO', 100, 100);
+INSERT INTO TB_HEROIS (nome, classe, hp_atual, hp_max) 
+VALUES ('Sif', 'LADRÃO', 80, 80);
+INSERT INTO TB_HEROIS (nome, classe, hp_atual, hp_max) 
+VALUES ('Gwyn', 'MAGO', 60, 60);
+COMMIT;
+📋 Orientações Gerais
+1. O que deve ser feito em Python
+Conectividade: Usar a biblioteca python-oracledb.
+Segurança: Utilizar Variáveis de Ambiente (os.environ) para as credenciais do banco.
+Interface: Criar uma rota (ex: /processar) que dispare a execução do bloco PL/SQL no banco de dados.
+2. O que deve ser feito em PL/SQL
+O aluno não deve apenas fazer UPDATE simples. O requisito obrigatório é o uso de:
+
+Bloco Anônimo (DECLARE... BEGIN... END;).
+Variáveis para cálculos intermediários.
+Cursores (Explícitos ou via FOR r IN (...)).
+Estrutura de Repetição (LOOP ou FOR).
+
+3. Como hospedar no Vercel
+Crie uma conta no Vercel.
+No arquivo requirements.txt, inclua python-oracledb.
+No painel da Vercel, em Settings > Environment Variables, adicione: DB_USER, DB_PASSWORD, DB_DSN (Ex: host:port/service_name).
+Certifique-se de que o banco Oracle permite conexões externas (liberar o IP da Vercel ou usar 0.0.0.0/0 se for um ambiente controlado de testes).
+4. Validação pelo Professor
+Para validar, o professor irá:
+
+Acessar a URL da aplicação no Vercel.
+Verificar o repositório no GitHub para ler o código Python e o bloco PL/SQL utilizado.
+Verificar no banco de dados se as tabelas foram alteradas corretamente após a ação na interface Web.
+🐍 Python + Flask
+🗄️ Oracle PL/SQL
+☁️ Vercel
