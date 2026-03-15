@@ -1,4 +1,4 @@
-from fastapi import FastAPI, Form
+from fastapi import FastAPI, Request
 from fastapi.responses import HTMLResponse, RedirectResponse
 import oracledb, os
 
@@ -55,6 +55,7 @@ def processar_turno():
     """
 
     cur.execute(plsql)
+
     cur.close()
     conn.close()
 
@@ -67,7 +68,7 @@ def restaurar_herois():
     qtd = cur.fetchone()[0]
 
     if qtd == 0:
-        msg = "Somente heróis caídos podem receber a Bênção de Galadriel."
+        msg = "⚠ Somente heróis caídos podem receber a Bênção de Galadriel."
     else:
 
         plsql = """
@@ -76,12 +77,14 @@ def restaurar_herois():
             SET hp_atual = hp_max,
                 status = 'ATIVO'
             WHERE status = 'CAÍDO';
+
             COMMIT;
         END;
         """
 
         cur.execute(plsql)
-        msg = "Vida dos heróis caídos restaurada ao máximo!"
+
+        msg = "✨ Vida dos heróis caídos restaurada ao máximo!"
 
     cur.close()
     conn.close()
@@ -90,7 +93,7 @@ def restaurar_herois():
 
 
 @app.get("/", response_class=HTMLResponse)
-def dashboard():
+def dashboard(request: Request, msg: str = ""):
 
     dados = listar_herois()
 
@@ -110,8 +113,21 @@ def dashboard():
         </tr>
         """
 
+    alerta = ""
+
+    if msg:
+
+        cor_alerta = "#16a34a" if "restaurada" in msg else "#f59e0b"
+
+        alerta = f"""
+        <div style="background:{cor_alerta}; padding:15px; border-radius:10px; margin-bottom:20px; text-align:center;">
+            {msg}
+        </div>
+        """
+
     return f"""
     <html>
+
     <head>
 
     <title>SQLgard</title>
@@ -165,6 +181,10 @@ def dashboard():
         border-bottom:1px solid #374151;
     }}
 
+    tr:hover {{
+        background:#1f2937;
+    }}
+
     .alert {{
         background:#222;
         padding:15px;
@@ -179,7 +199,9 @@ def dashboard():
 
     <body>
 
-    <h1>SQLgard — O Despertar do Kernel Ancestral e Os Anéis do Poder</h1>
+    <h1>⚔ SQLgard — O Despertar do Kernel Ancestral</h1>
+
+    {alerta}
 
     <form action="/turno" method="post">
         <button class="turno">Próximo Turno</button>
@@ -194,11 +216,11 @@ def dashboard():
     <table>
 
     <tr>
-    <th>Nome</th>
-    <th>Classe</th>
-    <th>HP Atual</th>
-    <th>HP Máx</th>
-    <th>Status</th>
+        <th>Nome</th>
+        <th>Classe</th>
+        <th>HP Atual</th>
+        <th>HP Máx</th>
+        <th>Status</th>
     </tr>
 
     {rows}
@@ -211,17 +233,22 @@ def dashboard():
     </div>
 
     </body>
+
     </html>
     """
 
 
 @app.post("/turno")
 def turno():
+
     processar_turno()
+
     return RedirectResponse("/", status_code=303)
 
 
 @app.post("/bencao")
 def bencao():
-    restaurar_herois()
-    return RedirectResponse("/", status_code=303)
+
+    msg = restaurar_herois()
+
+    return RedirectResponse(f"/?msg={msg}", status_code=303)
