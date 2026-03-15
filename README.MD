@@ -1,5 +1,8 @@
 🧙 SQLgard – O Despertar do Kernel Ancestral e Os Anéis do Poder
 RPG Engine com Python + Oracle PL/SQL
+
+
+
 📖 A História
 
 Um antigo servidor de RPG foi encontrado nos escombros de uma universidade esquecida.
@@ -14,9 +17,15 @@ Inspirado nas lendas de The Lord of the Rings, o sistema inclui uma mecânica es
 
 Assim, o sistema simula um pequeno motor de RPG, onde a interface visual mostra o estado dos heróis enquanto a lógica do combate é processada diretamente dentro do banco de dados.
 
+
+
+
 🧠 Arquitetura do Projeto
 
 O sistema foi dividido em duas camadas principais.
+
+
+
 
 🎮 Interface (Python)
 
@@ -64,6 +73,7 @@ Hospedagem:
 
 Vercel
 
+
 🧪 SQL de Inicialização
 CREATE TABLE TB_HEROIS (
     id_heroi NUMBER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
@@ -84,6 +94,9 @@ INSERT INTO TB_HEROIS (nome, classe, hp_atual, hp_max)
 VALUES ('Gwyn', 'MAGO', 60, 60);
 
 COMMIT;
+
+
+
 ⚔️ Mecânica da Batalha
 
 A cada turno:
@@ -93,6 +106,9 @@ A Névoa Ancestral causa 10 pontos de dano aos heróis ativos
 Se o HP chegar a 0, o status muda para CAÍDO
 
 A Bênção de Galadriel pode restaurar os heróis derrotados
+
+
+
 
 🧩 Bloco PL/SQL do Turno
 DECLARE
@@ -122,6 +138,10 @@ BEGIN
 
     COMMIT;
 END;
+
+
+
+
 🌐 Deploy
 
 A aplicação foi hospedada utilizando Vercel.
@@ -135,12 +155,18 @@ DB_DSN
 Exemplo de DSN:
 
 host:1521/service_name
+
+
+
 📦 Estrutura do Projeto
 api/
    app.py
 
 requirements.txt
 README.md
+
+
+
 ⚡ Conceitos Demonstrados
 
 Este projeto demonstra:
