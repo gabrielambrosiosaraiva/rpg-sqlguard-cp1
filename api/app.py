@@ -20,6 +20,7 @@ pool = oracledb.create_pool(
 def get_connection():
     return pool.acquire()
 
+
 @app.get("/listar-herois", response_class=HTMLResponse)
 def listar_herois():
     try:
@@ -74,3 +75,76 @@ def listar_herois():
 
     except Exception as e:
         return f"<p>Erro: {str(e)}</p>"
+
+
+@app.post("/processar-turno")
+def processar_turno():
+
+    conn = get_connection()
+    cur = conn.cursor()
+
+    plsql = """
+        DECLARE
+            v_dano NUMBER := 10;
+            v_hp NUMBER;
+        BEGIN
+            FOR r IN (SELECT id_heroi, hp_atual FROM TB_HEROIS WHERE status = 'ATIVO') LOOP
+                v_hp := r.hp_atual - v_dano;
+
+                IF v_hp <= 0 THEN
+                    UPDATE TB_HEROIS
+                    SET hp_atual = 0,
+                        status = 'CAÍDO'
+                    WHERE id_heroi = r.id_heroi;
+                ELSE
+                    UPDATE TB_HEROIS
+                    SET hp_atual = v_hp
+                    WHERE id_heroi = r.id_heroi;
+                END IF;
+
+            END LOOP;
+
+            COMMIT;
+        END;
+    """
+
+    cur.execute(plsql)
+
+    cur.close()
+    conn.close()
+
+    return {"msg": "Turno processado!"}
+
+
+@app.post("/restaurar-herois")
+def restaurar_herois():
+
+    conn = get_connection()
+    cur = conn.cursor()
+
+    cur.execute("SELECT COUNT(*) FROM TB_HEROIS WHERE status = 'CAÍDO'")
+    qtd = cur.fetchone()[0]
+
+    if qtd == 0:
+        msg = "Somente heróis caídos podem receber a Bênção de Galadriel."
+    else:
+
+        plsql = """
+        BEGIN
+            UPDATE TB_HEROIS
+            SET hp_atual = hp_max,
+                status = 'ATIVO'
+            WHERE status = 'CAÍDO';
+
+            COMMIT;
+        END;
+        """
+
+        cur.execute(plsql)
+
+        msg = "Vida dos heróis caídos restaurada ao máximo!"
+
+    cur.close()
+    conn.close()
+
+    return {"msg": msg}
