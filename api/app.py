@@ -179,7 +179,7 @@ def dashboard():
 
     <body>
 
-    <h1>SQLgard — O Despertar do Kernel Ancestral</h1>
+    <h1>SQLgard — O Despertar do Kernel Ancestral e Os Anéis do Poder</h1>
 
     <form action="/turno" method="post">
         <button class="turno">Próximo Turno</button>
