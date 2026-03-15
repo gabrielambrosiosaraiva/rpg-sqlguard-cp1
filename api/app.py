@@ -1,5 +1,6 @@
 from fastapi import FastAPI
 import oracledb, os
+import uvicorn
 
 app = FastAPI()
 
