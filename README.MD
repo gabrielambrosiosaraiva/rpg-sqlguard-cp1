@@ -1,54 +1,70 @@
-#SQLgard – O Despertar do Kernel Ancestral E Os Anéis do Poder
+🧙 SQLgard – O Despertar do Kernel Ancestral e Os Anéis do Poder
+RPG Engine com Python + Oracle PL/SQL
+📖 A História
 
-##👥 Integrantes
-- João Victor Vendrameto – RM 563665
-- Gabriel Ambrósio Saraiva – RM 566552
+Um antigo servidor de RPG foi encontrado nos escombros de uma universidade esquecida.
 
-##📌 Descrição
-Mini-RPG acadêmico feito em **Python + Streamlit**, conectado a um banco de dados **Oracle**.  
-A cada turno, os heróis sofrem dano da névoa ancestral. O jogador pode restaurar os heróis caídos, trazendo-os de volta ao estado ativo com vida máxima.
+No mundo de SQLgard, uma névoa venenosa ancestral começou a se espalhar pelo campo de batalha, drenando lentamente a vida de todos os heróis ativos.
 
-##📌 Diagrama de Fluxo
-o
+A cada turno, essa névoa consome parte da energia vital dos guerreiros, aproximando-os lentamente da queda.
 
- Usuário
-   │
-   ▼
- Interface Streamlit
-   │   ├── Botão "Próximo Turno" → chama função processar_turno()
-   │   └── Botão "Bênção de Galadriel" → chama função restaurar_herois()
-   │
-   ▼
- Banco Oracle (TB_HEROIS)
-   │   ├── SELECT → listar_herois()
-   │   ├── UPDATE → aplicar dano da névoa
-   │   └── UPDATE → restaurar heróis caídos
-   │
-   ▼
- Streamlit exibe tabela atualizada dos heróis
+Mas uma antiga magia ainda resiste.
 
-##📌 Fluxo de Funcionamento
-- Usuário interage com a interface web (Streamlit).
-- Cada ação dispara funções Python que executam blocos PL/SQL no Oracle.
-- O banco atualiza os dados dos heróis (HP, status).
-- O Streamlit renderiza novamente a tabela com os estados atualizados.
+Inspirado nas lendas de The Lord of the Rings, o sistema inclui uma mecânica especial chamada Bênção de Galadriel. Quando todos os heróis parecem estar perdidos, essa magia pode restaurar completamente os heróis que foram derrotados, permitindo que a batalha continue e evitando que o jogo termine prematuramente.
 
-##📌 Tecnologias Usadas
-- Python 3.12+ (compatível com `python-oracledb`)
-- Streamlit → interface web interativa
-- Oracle Database → armazenamento dos heróis
-- python-oracledb ou cx_Oracle → driver de conexão
-- pandas → manipulação e estilização da tabela
+Assim, o sistema simula um pequeno motor de RPG, onde a interface visual mostra o estado dos heróis enquanto a lógica do combate é processada diretamente dentro do banco de dados.
 
-##📌 Estrutura do Projeto
-- `app.py` → código principal
-- `requirements.txt` → dependências
-- `README.md` → documentação
+🧠 Arquitetura do Projeto
 
-##📌 Banco de Dados
-Tabela usada: **TB_HEROIS**
+O sistema foi dividido em duas camadas principais.
 
-```sql
+🎮 Interface (Python)
+
+Responsável por:
+
+Exibir o estado atual dos heróis
+
+Permitir avançar o turno da batalha
+
+Aplicar a Bênção de Galadriel
+
+Exibir mensagens narrativas do combate
+
+A aplicação foi construída com FastAPI.
+
+⚙️ Motor do Jogo (PL/SQL)
+
+Toda a lógica da batalha ocorre dentro do banco de dados Oracle Database.
+
+A cada turno:
+
+A Névoa Ancestral causa dano em todos os heróis ativos
+
+O HP é reduzido
+
+Se o HP chegar a 0, o status muda para CAÍDO
+
+A Bênção de Galadriel pode restaurar todos os heróis caídos, devolvendo-os ao combate com HP máximo.
+
+🛠️ Tecnologias Utilizadas
+
+Backend:
+
+FastAPI
+
+python-oracledb
+
+Banco de Dados:
+
+Oracle Database
+
+PL/SQL
+
+Hospedagem:
+
+Vercel
+
+🧪 SQL de Inicialização
 CREATE TABLE TB_HEROIS (
     id_heroi NUMBER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     nome VARCHAR2(50),
@@ -58,50 +74,88 @@ CREATE TABLE TB_HEROIS (
     status VARCHAR2(20) DEFAULT 'ATIVO'
 );
 
--- Inserções iniciais
-INSERT INTO TB_HEROIS (nome, classe, hp_atual, hp_max) VALUES ('Artorias', 'GUERREIRO', 100, 100);
-INSERT INTO TB_HEROIS (nome, classe, hp_atual, hp_max) VALUES ('Sif', 'LADRÃO', 80, 80);
-INSERT INTO TB_HEROIS (nome, classe, hp_atual, hp_max) VALUES ('Gwyn', 'MAGO', 60, 60);
+INSERT INTO TB_HEROIS (nome, classe, hp_atual, hp_max)
+VALUES ('Artorias', 'GUERREIRO', 100, 100);
+
+INSERT INTO TB_HEROIS (nome, classe, hp_atual, hp_max)
+VALUES ('Sif', 'LADRÃO', 80, 80);
+
+INSERT INTO TB_HEROIS (nome, classe, hp_atual, hp_max)
+VALUES ('Gwyn', 'MAGO', 60, 60);
 
 COMMIT;
+⚔️ Mecânica da Batalha
 
+A cada turno:
 
+A Névoa Ancestral causa 10 pontos de dano aos heróis ativos
 
-##📌 Funcionalidades
-- Listar Heróis → mostra nome, classe, HP e status.
-- Próximo Turno → aplica dano da névoa (10 pontos por turno).
-- Restaurar Heróis → revive todos os heróis caídos e restaura HP ao máximo.
+Se o HP chegar a 0, o status muda para CAÍDO
 
-##📌 requirements.txt
+A Bênção de Galadriel pode restaurar os heróis derrotados
 
-##📌Para Python 3.12
+🧩 Bloco PL/SQL do Turno
+DECLARE
+    v_dano NUMBER := 10;
+    v_hp NUMBER;
+BEGIN
+    FOR r IN (
+        SELECT id_heroi, hp_atual
+        FROM TB_HEROIS
+        WHERE status = 'ATIVO'
+    ) LOOP
 
-streamlit
-python-oracledb
-pandas
+        v_hp := r.hp_atual - v_dano;
 
+        IF v_hp <= 0 THEN
+            UPDATE TB_HEROIS
+            SET hp_atual = 0,
+                status = 'CAÍDO'
+            WHERE id_heroi = r.id_heroi;
+        ELSE
+            UPDATE TB_HEROIS
+            SET hp_atual = v_hp
+            WHERE id_heroi = r.id_heroi;
+        END IF;
 
-##📌Para Python 3.13
-streamlit
-cx_Oracle
-pandas
+    END LOOP;
 
-##📌 Como Rodar Localmente
+    COMMIT;
+END;
+🌐 Deploy
 
-pip install -r requirements.txt
-setx DB_USER meu_usuario
-setx DB_PASSWORD minha_senha
-setx DB_DSN "host:porta/servico"
-streamlit run app.py
+A aplicação foi hospedada utilizando Vercel.
 
+Variáveis de ambiente utilizadas:
 
-##📌 Deploy no Vercel
-- Adicione requirements.txt ao projeto.
-- Configure variáveis de ambiente (DB_USER, DB_PASSWORD, DB_DSN) no painel do Vercel.
-- Comando de inicialização:
+DB_USER
+DB_PASSWORD
+DB_DSN
 
-streamlit run app.py --server.port=$PORT --server.headless=true
+Exemplo de DSN:
 
-##📌 Observações
-- Cada clique em Próximo Turno aplica um turno de dano.
-- O botão Restaurar Heróis revive todos os heróis caídos de uma vez.
+host:1521/service_name
+📦 Estrutura do Projeto
+api/
+   app.py
+
+requirements.txt
+README.md
+⚡ Conceitos Demonstrados
+
+Este projeto demonstra:
+
+Integração Python + Oracle
+
+Uso de PL/SQL para lógica de negócio
+
+Processamento transacional dentro do banco
+
+Deploy de aplicações Python serverless
+
+Interface web integrada ao banco de dados
+
+👨‍💻 Integrantes
+Nome	RM
+João Victor Vendrameto	563665
+Gabriel Ambrósio Saraiva	566552
