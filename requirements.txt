@@ -1,3 +1,2 @@
-fastapi
-uvicorn
-oracledb
+flask
+python-oracledb
