@@ -3,16 +3,17 @@ import oracledb, os
 
 app = FastAPI()
 
-DB_USER = os.environ["DB_USER"]
-DB_PASSWORD = os.environ["DB_PASSWORD"]
-DB_DSN = os.environ["DB_DSN"]
+pool = oracledb.create_pool(
+    user=DB_USER,
+    password=DB_PASSWORD,
+    dsn=DB_DSN,
+    min=1,
+    max=5,
+    increment=1
+)
 
 def get_connection():
-    return oracledb.connect(
-        user=DB_USER,
-        password=DB_PASSWORD,
-        dsn=DB_DSN
-    )
+    return pool.acquire()
 
 @app.get("/listar-herois", response_class=HTMLResponse)
 def listar_herois():
