@@ -15,6 +15,9 @@ Gabriel Ambrósio Saraiva  566552
 
 🧙 SQLgard – O Despertar do Kernel Ancestral e Os Anéis do Poder
 RPG Engine com Python + Oracle PL/SQL
+
+
+
 📖 A História
 
 Um antigo servidor de RPG foi encontrado nos escombros de uma universidade esquecida.
@@ -72,17 +75,25 @@ Backend
 
 🔌 oracledb
 
+
+
 Banco de Dados
 
 🗄 Oracle Database
 
 ⚙️ PL/SQL
 
+
+
+
 Hospedagem
 
 ☁ Vercel
 
 🧪 SQL de Inicialização
+
+
+
 CREATE TABLE TB_HEROIS (
     id_heroi NUMBER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     nome VARCHAR2(50),
@@ -102,6 +113,9 @@ INSERT INTO TB_HEROIS (nome, classe, hp_atual, hp_max)
 VALUES ('Gwyn', 'MAGO', 60, 60);
 
 COMMIT;
+
+
+
 ⚔️ Mecânica da Batalha
 
 A cada turno:
@@ -112,7 +126,15 @@ Se o HP chegar a 0, o status muda para CAÍDO
 
 A Bênção de Galadriel pode restaurar os heróis derrotados.
 
+
+
+
 🧩 Bloco PL/SQL do Turno
+
+
+
+
+
 DECLARE
     v_dano NUMBER := 10;
     v_hp NUMBER;
@@ -140,6 +162,9 @@ BEGIN
 
     COMMIT;
 END;
+
+
+
 🌐 Deploy
 
 A aplicação foi hospedada utilizando Vercel.
