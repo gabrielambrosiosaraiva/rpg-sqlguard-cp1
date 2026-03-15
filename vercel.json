@@ -1,3 +1,7 @@
 {
-  "buildCommand": "bash setup_instantclient.sh"
+  "functions": {
+    "api/app.py": {
+      "runtime": "python3.11"
+    }
+  }
 }
