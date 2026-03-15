@@ -199,7 +199,7 @@ def dashboard(request: Request, msg: str = ""):
 
     <body>
 
-    <h1>⚔ SQLgard — O Despertar do Kernel Ancestral</h1>
+    <h1>⚔ SQLgard — O Despertar do Kernel Ancestral e Os Anéis do Poder</h1>
 
     {alerta}
 
