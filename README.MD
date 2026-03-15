@@ -10,6 +10,9 @@ Gabriel Ambrósio Saraiva  566552
 
 
 
+
+
+
 🧙 SQLgard – O Despertar do Kernel Ancestral e Os Anéis do Poder
 RPG Engine com Python + Oracle PL/SQL
 📖 A História
