@@ -1,8 +1,7 @@
-from fastapi import FastAPI, Request
-from fastapi.responses import HTMLResponse, RedirectResponse
+from flask import Flask, request, redirect
 import oracledb, os
 
-app = FastAPI()
+app = Flask(__name__)
 
 DB_USER = os.environ.get("DB_USER")
 DB_PASSWORD = os.environ.get("DB_PASSWORD")
@@ -92,8 +91,10 @@ def restaurar_herois():
     return msg
 
 
-@app.get("/", response_class=HTMLResponse)
-def dashboard(request: Request, msg: str = ""):
+@app.route("/", methods=["GET"])
+def dashboard():
+
+    msg = request.args.get("msg", "")
 
     dados = listar_herois()
 
@@ -238,17 +239,21 @@ def dashboard(request: Request, msg: str = ""):
     """
 
 
-@app.post("/turno")
+@app.route("/turno", methods=["POST"])
 def turno():
 
     processar_turno()
 
-    return RedirectResponse("/", status_code=303)
+    return redirect("/")
 
 
-@app.post("/bencao")
+@app.route("/bencao", methods=["POST"])
 def bencao():
 
     msg = restaurar_herois()
 
-    return RedirectResponse(f"/?msg={msg}", status_code=303)
+    return redirect(f"/?msg={msg}")
+
+
+if __name__ == "__main__":
+    app.run(debug=True)
