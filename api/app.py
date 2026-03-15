@@ -1,15 +1,18 @@
 from fastapi import FastAPI
-from fastapi.responses import HTMLResponse
 import oracledb, os
 
 app = FastAPI()
 
-DB_USER = os.environ.get("DB_USER")
-DB_PASSWORD = os.environ.get("DB_PASSWORD")
-DB_DSN = os.environ.get("DB_DSN")
+DB_USER = os.environ["DB_USER"]
+DB_PASSWORD = os.environ["DB_PASSWORD"]
+DB_DSN = os.environ["DB_DSN"]
 
 def get_connection():
-    return oracledb.connect(user=DB_USER, password=DB_PASSWORD, dsn=DB_DSN)
+    return oracledb.connect(
+        user=DB_USER,
+        password=DB_PASSWORD,
+        dsn=DB_DSN
+    )
 
 @app.get("/listar-herois", response_class=HTMLResponse)
 def listar_herois():
