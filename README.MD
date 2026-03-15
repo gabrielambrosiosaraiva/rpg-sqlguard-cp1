@@ -111,6 +111,9 @@ A Bênção de Galadriel pode restaurar os heróis derrotados
 
 
 🧩 Bloco PL/SQL do Turno
+
+
+
 DECLARE
     v_dano NUMBER := 10;
     v_hp NUMBER;
