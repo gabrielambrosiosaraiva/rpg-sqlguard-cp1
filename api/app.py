@@ -1,13 +1,12 @@
 from fastapi import FastAPI
+from fastapi.responses import HTMLResponse
 import oracledb, os
-import uvicorn
 
 app = FastAPI()
 
 DB_USER = os.environ["DB_USER"]
 DB_PASSWORD = os.environ["DB_PASSWORD"]
 DB_DSN = os.environ["DB_DSN"]
-
 
 pool = oracledb.create_pool(
     user=DB_USER,
@@ -26,12 +25,13 @@ def listar_herois():
     try:
         conn = get_connection()
         cur = conn.cursor()
+
         cur.execute("SELECT nome, classe, hp_atual, hp_max, status FROM TB_HEROIS")
         dados = cur.fetchall()
+
         cur.close()
         conn.close()
 
-        # Montar tabela HTML
         html = """
         <html>
         <head>
@@ -52,6 +52,7 @@ def listar_herois():
                     <th>Status</th>
                 </tr>
         """
+
         for nome, classe, hp_atual, hp_max, status in dados:
             html += f"""
                 <tr>
@@ -62,11 +63,14 @@ def listar_herois():
                     <td>{status}</td>
                 </tr>
             """
+
         html += """
             </table>
         </body>
         </html>
         """
+
         return html
+
     except Exception as e:
         return f"<p>Erro: {str(e)}</p>"
