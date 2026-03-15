@@ -1,6 +1,7 @@
 from fastapi import FastAPI
 import oracledb, os
-oracledb.init_oracle_client(lib_dir=os.path.join(os.getcwd(), "instantclient"))
+oracledb.init_oracle_client(lib_dir=os.path.join(os.getcwd(), "instantclient", "instantclient_19_22"))
+
 
 app = FastAPI()
 
